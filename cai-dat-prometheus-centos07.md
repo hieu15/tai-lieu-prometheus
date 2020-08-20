@@ -25,7 +25,7 @@ Mở port trên iptables bằng cách thêm vào file config của iptables vớ
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 9093 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 9087 -j ACCEPT
 ```
-II/ Cài đặt Prometheus
+### II/ Cài đặt Prometheus
 Download source prometheus từ website
 ```bash
 wget https://github.com/prometheus/prometheus/releases/download/v2.20.1/prometheus-2.20.1.linux-amd64.tar.gz
