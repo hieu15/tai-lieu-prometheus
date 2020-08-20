@@ -1,82 +1,105 @@
-### I / Update system, cấu hình sync NTP Việt Nam và disable selinux trên CentOS
+## Cài đặt snmp-exporter
+### I/ Cài đặt GoLang
 ```bash
-yum install ntpdate -y
-ntpdate 1.ro.pool.ntp.org
-vim /etc/sysconfig/selinux
+wget https://golang.org/dl/go1.15.linux-amd64.tar.gz
+tar -xvzf go1.15.linux-amd64.tar.gz
+mv go /usr/local/
+export GOROOT=/usr/local/go
+export PATH=$GOROOT/bin:$PATH
 ```
-Change “**SELINUX=enforcing**” to “**SELINUX=disabled**”.
-Cài đặt iptables trên CentOS7
+Kiểm tra lại GoLang version
 ```bash
-systemctl stop firewalld
-systemctl disable firewalld
-systemctl mask --now firewalld
-yum install iptables-services -y
-systemctl start iptables
-systemctl enable iptables
+go version
+go env
 ```
-Mở port trên iptables bằng cách thêm vào file config của iptables với nội dung sau
+Mặc định GoLang chỉ tồn tại cho 1 shell, nếu muốn shell nào cũng chạy được phải thêm đoạn export GoLang vào **.bashrc**
 ```bash
--A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 3000 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 9090 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 9116 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 9100 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 9182 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 9093 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 9087 -j ACCEPT
+export GOROOT=/usr/local/go
+export PATH=$GOROOT/bin:$PATH
 ```
-### II/ Cài đặt Prometheus
-Download source prometheus từ website
+II/ Cài đặt snmp-exporter
+Link tham khảo : [https://github.com/prometheus/snmp_exporter](https://github.com/prometheus/snmp_exporter)
+Cài các package cần thiết
 ```bash
-wget https://github.com/prometheus/prometheus/releases/download/v2.20.1/prometheus-2.20.1.linux-amd64.tar.gz
-tar -xvzf prometheus-2.20.1.linux-amd64.tar.gz
-mv prometheus-2.20.1.linux-amd64 /usr/local/prometheus
+sudo yum install git gcc gcc-g++ make net-snmp net-snmp-utils net-snmp-libs net-snmp-devel # RHEL-based distros
 ```
-Tạo folder lưu trử cho data của prometheus
+Build Generator
 ```bash
-mkdir /usr/local/prometheus/data-prometheus
+go get github.com/prometheus/snmp_exporter/generator
+cd ${GOPATH-$HOME/go}/src/github.com/prometheus/snmp_exporter/generator
+go build
+make mibs
 ```
-Tạo user để chạy service prometheus
+Tạo file generator.yml
 ```bash
-sudo useradd --no-create-home --shell /bin/false prometheus
+vi generator.yml
 ```
-Phân quyền cho user vừa tạo là owner  của thư mục source prometheus
-```bash
-chown -R prometheus:prometheus /usr/local/prometheus
+```yaml
+modules:
+########## Fortigate
+  fortigate_snmp:
+   walk:
+   - ifXTable
+   - fgVpn
+   - fgSystem
+   - fgIntf
+   version: 2
+   max_repetitions: 25
+   retries: 3
+   timeout: 10s
+   auth:
+    community: ldgsnmpmonitor
+########### Cisco 
+  cisco:
+#   walk: [sysUpTime, interfaces, ifXTable]
+   walk:
+   - 1.3.6.1.2.1.2.2.1.1
+   - 1.3.6.1.2.1.2.2.1.2
+   - 1.3.6.1.2.1.2.2.1.10
+   - 1.3.6.1.2.1.2.2.1.13
+   - 1.3.6.1.2.1.2.2.1.14
+   - 1.3.6.1.2.1.2.2.1.16
+   - 1.3.6.1.2.1.2.2.1.19
+   - 1.3.6.1.2.1.2.2.1.2
+   - 1.3.6.1.2.1.2.2.1.20
+   - 1.3.6.1.2.1.2.2.1.5
+   - 1.3.6.1.2.1.2.2.1.7
+   - 1.3.6.1.2.1.2.2.1.8
+   - 1.3.6.1.2.1.31.1.1.1.1
+   - 1.3.6.1.2.1.31.1.1.1.18
+   - 1.3.6.1.4.1.9.9.48.1.1.1.5
+   - 1.3.6.1.4.1.9.9.48.1.1.1.6
+   - 1.3.6.1.4.1.9.2.1
+   - 1.3.6.1.2.1.1.5
+   lookups:
+     - source_indexes: [ifIndex]
+       lookup: ifAlias
+     - source_indexes: [ifIndex]
+       lookup: ifDescr
+     - source_indexes: [ifIndex]
+       # Use OID to avoid conflict with Netscaler NS-ROOT-MIB.
+       lookup: 1.3.6.1.2.1.31.1.1.1.1 # ifName
+   overrides:
+     ifAlias:
+       ignore: true # Lookup metric
+     ifDescr:
+       ignore: true # Lookup metric
+     ifName:
+       ignore: true # Lookup metric
+     ifType:
+       type: EnumAsInfo
+   version: 2
+   max_repetitions: 25
+   retries: 3
+   timeout: 10s
+   auth:
+    community: ldgsnmpmonitor
 ```
+Download mib bỏ vào thư mục generator
+Link mib cisco : [ftp://ftp.cisco.com/pub/mibs/v1/OLD-CISCO-SYS-MIB.my](ftp://ftp.cisco.com/pub/mibs/v1/OLD-CISCO-SYS-MIB.my)
+Đối với fortigate download tại system/snmp
 
-Tạo service prometheus trong systemd
-```bash
-vi /etc/systemd/system/prometheus.service
-```
+<mark>Đối với các thiết bị mạng cần phải enable snmp.</mark>
 
-```bash
-Description=Prometheus
-Wants=network-online.target
-After=network-online.target
 
-[Service]
-User=prometheus
-Group=prometheus
-Type=simple
-ExecStart=/usr/local/prometheus/prometheus \
---config.file /usr/local/prometheus/prometheus.yml \
---storage.tsdb.path /usr/local/prometheus/data-prometheus \
---web.console.templates=/usr/local/prometheus/consoles \
---web.console.libraries=/usr/local/prometheus/console_libraries
 
-[Install]
-WantedBy=multi-user.target
-```
-### II/ Cài đặt Grafana
-Download tại link này https://grafana.com/grafana/download
-```bash
-wget https://dl.grafana.com/oss/release/grafana-7.1.3-1.x86_64.rpm
-sudo yum install grafana-7.1.3-1.x86_64.rpm
-sudo service grafana-server start
-sudo /sbin/chkconfig --add grafana-server
-systemctl daemon-reload
-systemctl start grafana-server
-systemctl status grafana-server
-sudo systemctl enable grafana-server.service
-```
