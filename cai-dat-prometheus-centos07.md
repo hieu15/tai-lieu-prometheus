@@ -1,12 +1,12 @@
-I / Update system, cấu hình sync NTP Việt Nam và disable selinux trên CentOS
-```
+### I / Update system, cấu hình sync NTP Việt Nam và disable selinux trên CentOS
+```bash
 yum install ntpdate -y
 ntpdate 1.ro.pool.ntp.org
 vim /etc/sysconfig/selinux
 ```
-Change “SELINUX=enforcing” to “SELINUX=disabled”.
+Change “**SELINUX=enforcing**” to “**SELINUX=disabled**”.
 Cài đặt iptables trên CentOS7
-```
+```bash
 systemctl stop firewalld
 systemctl disable firewalld
 systemctl mask --now firewalld
@@ -15,7 +15,7 @@ systemctl start iptables
 systemctl enable iptables
 ```
 Mở port trên iptables bằng cách thêm vào file config của iptables với nội dung sau
-```
+```bash
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 3000 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 9090 -j ACCEPT
@@ -27,20 +27,30 @@ Mở port trên iptables bằng cách thêm vào file config của iptables vớ
 ```
 II/ Cài đặt Prometheus
 Download source prometheus từ website
-```
+```bash
 wget https://github.com/prometheus/prometheus/releases/download/v2.20.1/prometheus-2.20.1.linux-amd64.tar.gz
 tar -xvzf prometheus-2.20.1.linux-amd64.tar.gz
 mv prometheus-2.20.1.linux-amd64 /usr/local/prometheus
 ```
 Tạo folder lưu trử cho data của prometheus
-`mkdir /usr/local/prometheus/data-prometheus`
-Tạo user để chạy service prometheus
-`sudo useradd --no-create-home --shell /bin/false prometheus`
-Phân quyền cho user vừa tạo là owner  của thư mục source prometheus
-`chown -R prometheus:prometheus /usr/local/prometheus`
-Tạo service prometheus trong systemd
-`vi /etc/systemd/system/prometheus.service`
+```bash
+mkdir /usr/local/prometheus/data-prometheus
 ```
+Tạo user để chạy service prometheus
+```bash
+sudo useradd --no-create-home --shell /bin/false prometheus
+```
+Phân quyền cho user vừa tạo là owner  của thư mục source prometheus
+```bash
+chown -R prometheus:prometheus /usr/local/prometheus
+```
+
+Tạo service prometheus trong systemd
+```bash
+vi /etc/systemd/system/prometheus.service
+```
+
+```bash
 Description=Prometheus
 Wants=network-online.target
 After=network-online.target
