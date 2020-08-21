@@ -1,0 +1,13 @@
+[Unit]
+Description=Prometheus BOT
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/usr/local/prometheus_bot/
+ExecStart=/usr/local/prometheus_bot/prometheus_bot -c  /usr/local/prometheus_bot/config.yaml
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
