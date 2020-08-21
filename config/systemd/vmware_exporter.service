@@ -1,0 +1,12 @@
+[Unit]
+Description=Prometheus VMWare Exporter
+After=network.target
+
+[Service]
+User=root
+Group=root
+ExecStart=/usr/bin/python3 /usr/local/bin/vmware_exporter -c /usr/local/lib/python3.6/site-packages/vmware_exporter/config.yml
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
