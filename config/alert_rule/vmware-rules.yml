@@ -1,0 +1,34 @@
+############# Define Rule Alert ###############
+# Fortigate, Pfsense
+############# Define Rule Alert ###############
+groups:
+- name: ESXI-alert
+  rules:
+
+################ ESXI CPU Usage High
+  - alert: ESXI CPU Usage High
+    expr: (vmware_host_cpu_usage) * 100 / (vmware_host_cpu_max) > 80
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "ESXI CPU Usage High (instance {{ $labels.instance }})"
+      description: "ESXI CPU Usage High is more than 80%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+################ ESXI Memory Usage High
+  - alert: ESXI Memory Usage High
+    expr: (vmware_host_memory_usage) * 100 / (vmware_host_memory_max) > 80
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "ESXI Memory Usage High (instance {{ $labels.instance }})"
+      description: "ESXI Memory Usage High is more than 80%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+################ Datastore Usage
+  - alert: DatastoreSpaceUsage
+    expr: ((vmware_datastore_capacity_size) - (vmware_datastore_freespace_size)) * 100 / (vmware_datastore_capacity_size) > 90
+    for: 1m
+    labels:
+      severity: error
+    annotations:
+      summary: "Datastore Space Usage (instance {{ $labels.instance }})"
+      description: "Datastore Space on Drive is used more than 90%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
