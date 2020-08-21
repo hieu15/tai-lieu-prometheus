@@ -17,7 +17,7 @@ Mặc định GoLang chỉ tồn tại cho 1 shell, nếu muốn shell nào cũn
 export GOROOT=/usr/local/go
 export PATH=$GOROOT/bin:$PATH
 ```
-II/ Cài đặt snmp-exporter
+### II/ Cài đặt snmp-exporter
 Link tham khảo : [https://github.com/prometheus/snmp_exporter](https://github.com/prometheus/snmp_exporter)
 Cài các package cần thiết
 ```bash
@@ -48,7 +48,7 @@ modules:
    retries: 3
    timeout: 10s
    auth:
-    community: ldgsnmpmonitor
+    community: snmpmonitor
 ########### Cisco 
   cisco:
 #   walk: [sysUpTime, interfaces, ifXTable]
@@ -93,7 +93,7 @@ modules:
    retries: 3
    timeout: 10s
    auth:
-    community: ldgsnmpmonitor
+    community: snmpmonitor
 ```
 Download mib bỏ vào thư mục generator
 
@@ -150,3 +150,54 @@ systemctl restart snmp_exporter.service
 systemctl status snmp_exporter.service
 systemctl enable snmp_exporter.service
 ```
+### III/ Tạo job trong prometheuse
+```bash
+vi /usr/local/prometheus.yml
+```
+
+```yaml
+################################ FORTIGATE
+  - job_name: 'fortigate'
+    static_configs:
+      - targets:
+        - 172.16.100.1 # fortigate device.
+        labels:                           
+         hostname: GROUP-FG
+         device: fortigate
+         company: LDG
+    scrape_interval: 3m
+    scrape_timeout : 3m
+    metrics_path: /snmp
+    params:
+      module: [fortigate_snmp]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 10.10.10.26:9116  # SNMP exporter.
+################################ CISCO
+  - job_name: 'cisco'
+    static_configs:
+      - targets: ['10.10.10.101']
+         # Access switch.
+        labels:                           
+         hostname: A-SW1
+         device: cisco
+         company: DG
+         
+    scrape_interval: 3m
+    scrape_timeout : 3m
+    metrics_path: /snmp
+    params:
+      module: [cisco]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 10.10.10.26:9116  # SNMP exporter.
+```
+
