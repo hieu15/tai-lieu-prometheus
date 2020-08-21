@@ -96,10 +96,51 @@ modules:
     community: ldgsnmpmonitor
 ```
 Download mib bỏ vào thư mục generator
-Link mib cisco : [ftp://ftp.cisco.com/pub/mibs/v1/OLD-CISCO-SYS-MIB.my](ftp://ftp.cisco.com/pub/mibs/v1/OLD-CISCO-SYS-MIB.my)
+Link mib cisco : [ftp://ftp.cisco.com](ftp://ftp.cisco.com/)
+
 Đối với fortigate download tại system/snmp
 
 <mark>Đối với các thiết bị mạng cần phải enable snmp.</mark>
+Export đường dẫn MIB và generate file snmp.yml
+```bash
+export MIBDIRS=mibs
+./generator generate
+```
+Cài đặt snmp_exporter. [Download tại đây](https://github.com/prometheus/snmp_exporter/releases)
+
+```bash
+wget https://github.com/prometheus/snmp_exporter/releases/download/v0.18.0/snmp_exporter-0.18.0.linux-amd64.tar.gz
+tar -xvzf snmp_exporter*
+mv snmp_exporter* /usr/local/snmp_exporter
+```
+
+Tạo user để chạy service snmp_exporter
+```bash
+sudo useradd --no-create-home --shell /bin/false snmp_exporter
+```
+Phân quyền cho user vừa tạo là owner của thư mục source snmp_exporter
+```bash
+chown -R snmp_exporter:snmp_exporter /usr/local/snmp_exporter
+```
+```bash
+vi /etc/systemd/system/snmp_exporter.service
+```
+```bash
+[Unit]
+Description=Snmp_exporter
+Wants=network-online.target
+After=network-online.target
+Ca
+[Service]
+User=root
+Group=root
+Type=simple
+ExecStart=/usr/local/snmp_exporter/snmp_exporter \
+--config.file=/usr/local/snmp_exporter/snmp.yml
+
+[Install]
+WantedBy=multi-user.target
+```
 
 
 
