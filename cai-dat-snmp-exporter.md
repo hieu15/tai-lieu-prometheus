@@ -111,7 +111,7 @@ Cài đặt snmp_exporter. [Download tại đây](https://github.com/prometheus/
 ```bash
 wget https://github.com/prometheus/snmp_exporter/releases/download/v0.18.0/snmp_exporter-0.18.0.linux-amd64.tar.gz
 tar -xvzf snmp_exporter*
-mv snmp_exporter* /usr/local/snmp_exporter
+mv snmp_exporter-0.18.0.linux-amd64 /usr/local/snmp_exporter
 ```
 
 Tạo user để chạy service snmp_exporter
@@ -130,7 +130,7 @@ vi /etc/systemd/system/snmp_exporter.service
 Description=Snmp_exporter
 Wants=network-online.target
 After=network-online.target
-Ca
+
 [Service]
 User=root
 Group=root
@@ -141,6 +141,11 @@ ExecStart=/usr/local/snmp_exporter/snmp_exporter \
 [Install]
 WantedBy=multi-user.target
 ```
-
+Copy file snmp.yml mà chúng ta đã generate vào thư mục của snmp_exporter
+```bash
+systemctl restart snmp_exporter.service
+systemctl status snmp_exporter.service
+systemctl enable snmp_exporter.service
+```
 
 
