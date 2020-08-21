@@ -96,6 +96,9 @@ modules:
     community: ldgsnmpmonitor
 ```
 Download mib bỏ vào thư mục generator
+
+<mark>**Phải bỏ tất cả các file MIB vào thư mục mibs. Nếu trong thư mục mibs có tồn tại thư mục khác ví dụ generator/cisco_v2 thì khi generate ra snmp.yml sẽ bị lổi vì không đọc được OID bên trong.**</mark>
+
 Link mib cisco : [ftp://ftp.cisco.com](ftp://ftp.cisco.com/)
 
 Đối với fortigate download tại system/snmp
@@ -147,5 +150,3 @@ systemctl restart snmp_exporter.service
 systemctl status snmp_exporter.service
 systemctl enable snmp_exporter.service
 ```
-
-
