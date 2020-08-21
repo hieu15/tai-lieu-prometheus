@@ -1,0 +1,26 @@
+############# Define Rule Alert ###############
+# my global config
+############# Define Rule Alert ###############
+groups:
+- name: Cisco-alert
+  rules:
+
+################ CPU Usage High
+  - alert: CPU Usage High
+    expr: avgBusy1 > 80
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "CPU Usage High (instance {{ $labels.instance }})"
+      description: "CPU Usage High is more than 80%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+################ Memory Usage High
+  - alert: Memory Usage High
+    expr: 100* (ciscoMemoryPoolUsed{ciscoMemoryPoolType="1"} / (ciscoMemoryPoolFree{ciscoMemoryPoolType="1"} + ciscoMemoryPoolUsed{ciscoMemoryPoolType="1"})) > 80
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Memory Usage High (instance {{ $labels.instance }})"
+      description: "Memory Usage High is more than 80%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
