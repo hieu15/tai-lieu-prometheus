@@ -1,0 +1,36 @@
+############# Define Rule Alert ###############
+# my global config
+############# Define Rule Alert ###############
+groups:
+- name: General Alert
+  rules:
+
+################ Down Alert
+  - alert: Device down
+    expr: up < 1
+    for: 10s
+    labels:
+      severity: warning
+    annotations:
+      summary: "Device down (instance {{ $labels.instance }})"
+      description: "Device down\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+################ AD sync pending
+  - alert: AD pending synchronizations
+    expr: sum(wmi_ad_replication_pending_synchronizations{}) > 0 
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "AD pending synchronizations (instance {{ $labels.instance }})"
+      description: "AD pending synchronizations\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+################ AD pending operations
+  - alert: AD pending operations
+    expr: sum(wmi_ad_replication_pending_operations{}) > 0 
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "AD pending operations (instance {{ $labels.instance }})"
+      description: "AD pending operations\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
