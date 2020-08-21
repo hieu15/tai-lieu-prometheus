@@ -1,0 +1,26 @@
+############# Define Rule Alert ###############
+# Fortigate, Pfsense
+############# Define Rule Alert ###############
+groups:
+- name: Firewall-alert
+  rules:
+
+################ Fortigate CPU Usage High
+  - alert: Fortigate CPU Usage High
+    expr: fgSysCpuUsage > 80
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Fortigate CPU Usage High (instance {{ $labels.instance }})"
+      description: "Fortigate CPU Usage High is more than 80%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+################ Fortigate Memory Usage High
+  - alert: Fortigate Memory Usage High
+    expr: fgSysMemUsage > 80
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Fortigate Memory Usage High (instance {{ $labels.instance }})"
+      description: "Fortigate Memory Usage High is more than 80%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
