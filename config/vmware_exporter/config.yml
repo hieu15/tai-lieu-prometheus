@@ -1,0 +1,50 @@
+default:
+    vsphere_host: 10.10.10.43
+    vsphere_user: 'monitor'
+    vsphere_password: 'Ldg@123'
+    ignore_ssl: True
+    specs_size: 5000
+    collect_only:
+        vms: True
+        vmguests: False
+        datastores: True
+        hosts: True
+        snapshots: True
+esxi02:
+    vsphere_host: 10.10.10.41
+    vsphere_user: 'monitor'
+    vsphere_password: 'Ldg@123'
+    ignore_ssl: True
+    specs_size: 5000
+    collect_only:
+        vms: True
+        vmguests: False
+        datastores: True
+        hosts: True
+        snapshots: True
+
+esxi01:
+    vsphere_host: 10.10.10.40
+    vsphere_user: 'monitor'
+    vsphere_password: 'Ldg@123'
+    ignore_ssl: True
+    specs_size: 5000
+    collect_only:
+        vms: True
+        vmguests: False
+        datastores: True
+        hosts: True
+        snapshots: False
+
+esxi04:
+    vsphere_host: 10.10.10.42
+    vsphere_user: 'monitor'
+    vsphere_password: 'Ldg@123'
+    ignore_ssl: True
+    specs_size: 5000
+    collect_only:
+        vms: True
+        vmguests: False
+        datastores: True
+        hosts: True
+        snapshots: False

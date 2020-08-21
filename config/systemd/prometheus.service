@@ -1,0 +1,18 @@
+[Unit]
+Description=Prometheus
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=root
+Group=root
+Type=simple
+ExecStart=/usr/local/prometheus/prometheus \
+--config.file /usr/local/prometheus/prometheus.yml \
+--storage.tsdb.path /usr/local/prometheus/ \
+--web.console.templates=/usr/local/prometheus/consoles \
+--web.console.libraries=/usr/local/prometheus/console_libraries
+
+[Install]
+WantedBy=multi-user.target
+

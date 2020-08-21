@@ -1,0 +1,186 @@
+# my global config
+global:
+  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+       - 10.10.10.26:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+    - "cisco-rules.yml"
+    - "windows-rules.yml"
+    - "global-rules.yml"
+    - "firewall-rules.yml"
+    - "vmware-rules.yml"
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+    - targets: ['localhost:9090']
+################################ FORTIGATE
+  - job_name: 'fortigate'
+    static_configs:
+      - targets:
+        - 172.16.100.1 # fortigate device.
+        labels:                           
+         hostname: LDGGROUP-FG
+         device: fortigate
+         company: LDG
+    scrape_interval: 3m
+    scrape_timeout : 3m
+    metrics_path: /snmp
+    params:
+      module: [fortigate_snmp]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 10.10.10.26:9116  # SNMP exporter.
+################################ CISCO
+  - job_name: 'cisco'
+    static_configs:
+      - targets: ['10.10.10.101']
+         # Access switch.
+        labels:                           
+         hostname: A-SW1
+         device: cisco
+         company: LDG
+
+      - targets: ['10.10.10.102']
+         # Access switch.
+        labels:                           
+         hostname: A-SW2
+         device: cisco
+         company: LDG
+
+      - targets: ['10.10.10.103']
+         # Access switch.
+        labels:                           
+         hostname: A-SW3
+         device: cisco
+         company: LDG
+
+      - targets: ['10.10.10.2']
+         # Core switch 01.
+        labels:                           
+         hostname: Core-SW1
+         device: cisco
+         company: LDG
+
+      - targets: ['10.10.10.3']
+         # Core switch 01.
+        labels:                           
+         hostname: Core-SW2
+         device: cisco
+         company: LDG
+
+    scrape_interval: 3m
+    scrape_timeout : 3m
+    metrics_path: /snmp
+    params:
+      module: [cisco]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 10.10.10.26:9116  # SNMP exporter.
+
+################################ WINDOWS
+  - job_name: 'pfsense'
+    static_configs:
+    - targets: ['10.10.10.54:9100']
+      labels:
+       hostname: OpenVPN
+       type: pfsense
+       company: LDG
+
+################################ VMWARWE
+  - job_name: 'vmware_vcenter'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+        - '10.10.10.43'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 10.10.10.26:9272
+################################ VMWARWE 111
+  - job_name: 'vmware_esx'
+    metrics_path: '/metrics'
+    file_sd_configs:
+      - files:
+        - /etc/prometheus/esx.yml
+    params:
+      section: [esx]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 10.10.10.26:9272
+################################ WINDOWS
+  - job_name: 'windows'
+    static_configs:
+    - targets: ['10.10.10.8:9182']
+      labels:                           
+       hostname: DC01
+       type: windows
+       company: LDG
+
+    - targets: ['10.10.10.10:9182']
+      labels:                           
+       hostname: DC
+       type: windows
+       company: LDG
+
+    - targets: ['10.10.10.9:9182']
+      labels:                           
+       hostname: ADC
+       type: windows
+       company: LDG
+
+    - targets: ['10.10.10.18:9182']
+      labels:                           
+       hostname: DBSERVER
+       type: windows
+       company: LDG
+
+    - targets: ['10.10.10.22:9182']
+      labels:                           
+       hostname: FILESERVER02
+       type: windows
+       company: LDG
+
+    - targets: ['10.10.10.23:9182']
+      labels:                           
+       hostname: FILESERVER01
+       type: windows
+       company: LDG
+
+    - targets: ['10.10.10.24:9182']
+      labels:                           
+       hostname: BACKUP-SVR
+       type: windows
+       company: LDG
