@@ -1,7 +1,8 @@
 ## Cài đặt node-exporter
 Để giảm sát được các server Linux, chúng ta cần phải cài đặt node-exporter (agent trên Linux) để Promethues có thể thu thập được metric từ các server Linux này.
-### I/ Cài đặt node_exporter
+### I/ Cài đặt node_exporter trên CentOS, Ubuntu
 Links tham khảo : https://prometheus.io/download/#node_exporter [https://prometheus.io/download/#node_exporter](https://prometheus.io/download/#node_exporter)
+
 Nhớ mở port 9100
 Bước 1: 
 Download **node_exporter**
@@ -49,4 +50,35 @@ systemctl start node_exporter
 systemctl enable node_exporter
 ```
 
-
+### I/ Cài đặt node_exporter trên FreeBSD  
+Pfsense là firewall mã nguồn mở chạy trên nền tảng FreeBSD. Chính vì thế chúng ta sẽ cài đặt node_exporter trên Pfsense để có thể giám sát được nó.\
+Bước 01: SSH vào  Pfsense, chọn 8 để vào shell\
+Bước 02: Cài đặt node_exporter
+```bash
+pkg add http://pkg.freebsd.org/FreeBSD:11:amd64/release_2/All/node_exporter-0.15.2.txz
+```
+Bước 03: Hiệu chỉnh các service trong node_exporter
+```bash
+vi /usr/local/etc/rc.d/node_exporter
+```
+Tìm đến các tham số sau và chỉnh lại như bên dưới:
+```bash
+: ${node_exporter_enable:="YES"}
+: ${node_exporter_user:="root"}
+: ${node_exporter_group:="root"}
+```
+Bước 04: Enable và start node_exporter 
+```bash
+/usr/local/etc/rc.d/node_exporter enabled
+/usr/local/etc/rc.d/node_exporter start
+```
+Bước 05: Tạo job trong prometheus để giám sát Pfsense với nội dung job sau:
+```json
+- job_name: 'pfsense'
+  static_configs:
+  - targets: ['10.10.10.54:9100']
+    labels:
+     hostname: LDG-VPN-01
+     type: pfsense
+     company: LDG
+```

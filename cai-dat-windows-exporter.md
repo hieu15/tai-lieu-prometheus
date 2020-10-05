@@ -15,7 +15,7 @@ Mở port 9182 trên server linux, và windows server.
 Bước 2: Mở CMD với quyền Administrator.
 Bước 3: Chạy comment msiexec với cú pháp như sau:
 ```bash
-msiexec /i \\10.10.10.22\Softwares\Server_softwares\prometheus\windows_exporter-0.14.0-amd64.msi ENABLED_COLLECTORS="ad,dns,cpu,cs,logon,memory,logical_disk,os,service,system,process,tcp,net,textfile,thermalzone"
+#### msiexec /i \\10.10.10.22\Softwares\Server_softwares\prometheus\windows_exporter-0.14.0-amd64.msi ENABLED_COLLECTORS="ad,dns,cpu,cs,logon,memory,logical_disk,os,service,system,process,tcp,net,textfile,thermalzone"
 ```
 Trong đó C:\wmi_exporter-0.9.0-amd64.msi là đường dẫn chứa file wmi_exporter.msi.
 ENABLED_COLLECTORS=”các loại metric cần thu thập, tên của loại metric trong hình bên trên”
