@@ -57,6 +57,15 @@ Bước 02: Cài đặt node_exporter
 ```bash
 pkg add http://pkg.freebsd.org/FreeBSD:11:amd64/release_2/All/node_exporter-0.15.2.txz
 ```
+Hoặc edit thành "YES"
+```bash
+vi /usr/local/etc/pkg/repos/FreeBSD.conf
+vi /usr/local/etc/pkg/repos/pfSense.conf               
+vi /etc/pkg/FreeBSD.conf
+```
+```bash
+pkg install node_exporter
+```
 Bước 03: Hiệu chỉnh các service trong node_exporter
 ```bash
 vi /usr/local/etc/rc.d/node_exporter
