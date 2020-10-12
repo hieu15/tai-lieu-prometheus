@@ -50,7 +50,7 @@ systemctl start node_exporter
 systemctl enable node_exporter
 ```
 
-### I/ Cài đặt node_exporter trên FreeBSD  
+### II/ Cài đặt node_exporter trên FreeBSD  
 Pfsense là firewall mã nguồn mở chạy trên nền tảng FreeBSD. Chính vì thế chúng ta sẽ cài đặt node_exporter trên Pfsense để có thể giám sát được nó.\
 Bước 01: SSH vào  Pfsense, chọn 8 để vào shell\
 Bước 02: Cài đặt node_exporter
