@@ -77,7 +77,7 @@ After=network.target
 [Service]
 User=vmware_exporter
 Group=vmware_exporter
-ExecStart=/usr/bin/python3 /usr/local/bin/vmware_exporter -c /usr/local/lib/python3.6/site-packages/vmware_exporter/config.yml
+ExecStart=/usr/local/bin/python3 /usr/local/bin/vmware_exporter -c /usr/local/lib/python3.6/site-packages/vmware_exporter/config.yml
 Type=simple
 
 [Install]
