@@ -65,7 +65,7 @@ sudo useradd --no-create-home --shell /bin/false vmware_exporter
 chown -R vmware_exporter /usr/local/bin/vmware_exporter
 ```
 ```bash
-vi /etc/systemd/system vmware_exporter.service
+vi /etc/systemd/system/vmware_exporter.service
 ```
 
 Nội dung file như sau: 
