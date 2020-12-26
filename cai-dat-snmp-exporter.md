@@ -21,7 +21,7 @@ export PATH=$GOROOT/bin:$PATH
 Link tham khảo : [https://github.com/prometheus/snmp_exporter](https://github.com/prometheus/snmp_exporter)
 Cài các package cần thiết
 ```bash
-sudo yum install git gcc gcc-g++ make net-snmp net-snmp-utils net-snmp-libs net-snmp-devel # RHEL-based distros
+sudo yum install git zip unzip gcc gcc-g++ make net-snmp net-snmp-utils net-snmp-libs net-snmp-devel # RHEL-based distros
 ```
 Build Generator
 ```bash
