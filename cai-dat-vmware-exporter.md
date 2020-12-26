@@ -59,6 +59,9 @@ esxi02:
         snapshots: True
 ```
 Bước 05: Tạo service trong systemd cho vmware_exporter 
+Tạo user : 
+sudo useradd --no-create-home --shell /bin/false vmware_exporter
+chown -R vmware_exporter /usr/local/bin/vmware_exporter
 ```bash
 vi /etc/systemd/system vmware_exporter.service
 ```
