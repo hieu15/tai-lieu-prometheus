@@ -70,7 +70,7 @@ vi /etc/systemd/system/vmware_exporter.service
 
 Nội dung file như sau: 
 ```bash
-Unit]
+[Unit]
 Description=Prometheus VMWare Exporter
 After=network.target
 
