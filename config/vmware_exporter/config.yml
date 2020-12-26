@@ -1,7 +1,7 @@
 default:
     vsphere_host: 10.10.10.43
     vsphere_user: 'monitor'
-    vsphere_password: 'Ldg@123'
+    vsphere_password: '123'
     ignore_ssl: True
     specs_size: 5000
     collect_only:
@@ -13,7 +13,7 @@ default:
 esxi02:
     vsphere_host: 10.10.10.41
     vsphere_user: 'monitor'
-    vsphere_password: 'Ldg@123'
+    vsphere_password: '123'
     ignore_ssl: True
     specs_size: 5000
     collect_only:
@@ -26,7 +26,7 @@ esxi02:
 esxi01:
     vsphere_host: 10.10.10.40
     vsphere_user: 'monitor'
-    vsphere_password: 'Ldg@123'
+    vsphere_password: '123'
     ignore_ssl: True
     specs_size: 5000
     collect_only:
@@ -39,7 +39,7 @@ esxi01:
 esxi04:
     vsphere_host: 10.10.10.42
     vsphere_user: 'monitor'
-    vsphere_password: 'Ldg@123'
+    vsphere_password: '123'
     ignore_ssl: True
     specs_size: 5000
     collect_only:
