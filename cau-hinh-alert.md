@@ -32,12 +32,12 @@ After=network-online.target
 User=alert_manager
 Group=alert_manager
 Type=simple
-ExecStart=/usr/local/alertmanager/alertmanager \
---config.file=/usr/local/alertmanager/alertmanager.yml
+ExecStart=/usr/local/alertmanager/alertmanager --config.file=/usr/local/alertmanager/alertmanager.yml -cluster.advertise-address=0.0.0.0:9093
 
 [Install]
 WantedBy=multi-user.target
 ```
+=> Nếu đặt Alert manager là IP public phải thêm vào option --cluster.advertise-address=0.0.0.0:9093
 Enable và start service 
 ```bash
 systemctl daemon-reload
